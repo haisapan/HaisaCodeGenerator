@@ -1,0 +1,34 @@
+﻿@using System;
+
+
+@* --- enable below line to get full intellisense, if you use the var/dynamic as Model, disable it when compiler --- *@
+@*@inherits RazorEngine.Templating.TemplateBase<Person>*@
+
+
+
+<html>
+<head>
+    <title>this is the head pages</title>
+</head>
+<body>
+    <div>
+
+        <h1>@Model.Name</h1>
+        <p>
+            @for (int i = 0; i < 10; i++)
+            {
+                @:test@(i)
+        }
+        </p>
+        <h1>@ViewBag.test</h1>
+
+        @@for (int i = 0; i < 10; i++)
+        {
+        <p>@@i</p>
+        }
+
+        <h1>@Model</h1>
+
+    </div>
+</body>
+</html>

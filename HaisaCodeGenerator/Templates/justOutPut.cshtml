@@ -1,0 +1,25 @@
+﻿@using System.Collections.Generic
+@using System.Web.Razor;
+@using RazorEngine.Compilation.ImpromptuInterface.InvokeExt
+@model HaisaCodeGenerator.Models.Person
+@{
+    var model = new
+    {
+
+    };
+    
+    var test = new List<string>();
+    var strList = new[] {"haisa", "pan", "xiao"};
+    ViewBag.test = "test";
+    ViewBag.Name = "name";
+    
+}
+
+@foreach (var str in strList)
+{
+    @: { field: '@str', title: '@str', width: 70 },
+
+}
+<h1>@ViewBag.test</h1>
+<h2>@Model.Id</h2>
+

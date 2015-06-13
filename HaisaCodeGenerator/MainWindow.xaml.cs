@@ -22,6 +22,7 @@ namespace HaisaCodeGenerator
         public MainWindow()
         {
             InitializeComponent();
+            CodeGeneratorHelper.RunGenerate();
         }
     }
 }
