@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web.Razor.Generator;
+using CodeGeneratorBase;
 using RazorEngine;
 using RazorEngine.Templating;
 
@@ -13,26 +15,19 @@ namespace HaisaCodeGenerator
     {
         public static void RunGenerate()
         {
-            var template = "";
+            //var template = "";
 
-            var templateFile =
-                //@"D:\Users\haisa.pan\Documents\Visual Studio 2013\Projects\HaisaCodeGenerator\HaisaCodeGenerator\1.cshtml";
-                @"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Templates\1.cshtml";
-            string content = File.ReadAllText(templateFile);
+            var templateFile =@"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Templates\1.cshtml";
 
-             var viewBag = new RazorEngine.Templating.DynamicViewBag();
-            viewBag.AddValue("test","testValue");
-            var result = Engine.Razor.RunCompile(content, "new", null,
-                new
-                {
-                    Name = "haisa"
-                },viewBag);
+            var generator = new CodeGeneratorCodeBase();
+              var viewBag = new DynamicViewBag();
+            viewBag.AddValue("test","hello haisa");
 
-            var test = "";
-
-           
-
-            Engine.Razor.RunCompile("@ViewBag.Name", null, viewBag);
+            var result=generator.RunGenerate(templateFile,
+                new{
+                Name = "hiasa"
+            }, 
+            viewBag);
 
         }
     }

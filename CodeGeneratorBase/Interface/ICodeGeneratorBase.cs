@@ -9,10 +9,10 @@ namespace CodeGeneratorBase.Interface
 {
     public interface ICodeGeneratorBase
     {
-        string RunGenerate(string filePath,  object model = null);
+        string RunGenerateFromString(string content, object model = null, DynamicViewBag viewBag = null);
         string RunGenerate(string filePath, object model = null,  DynamicViewBag viewBag = null);
-        void RunGenerate(string filePath, string outputFilePath,object model = null);
+        void RunGenerateAndOutPut(string filePath, object model , string outputFilePath);
 
-        void RunGenerate(string filePath, string outputFilePath, object model = null, DynamicViewBag viewBag = null);
+        void RunGenerateAndOutPut(string filePath, object model , DynamicViewBag viewBag, string outputFilePath);
     }
 }
