@@ -1,7 +1,17 @@
 ﻿@@using GoerTek.ESPSolution.WebApp.Common
+
 @{
+    var Model = new
+    {
+        ModelCode="BOMCost",
+        Name = "BOMCostList"
+    };
+}
+
+@@{
     ViewBag.Title = "BomList";
 }
+
 
 <link href="~/Themes/default/easyui.css" rel="stylesheet" />
 <link href="~/Themes/icon.css" rel="stylesheet" />
@@ -20,7 +30,7 @@
     return;
 }
 
-<script src="~/Scripts/BOMCost/BOMCostList.js"></script>
+<script src="~/Scripts/@Model.ModelCode/@(Model.Name).js"></script>
 <style type="text/css">
     .searchitem {
         float: left;
@@ -44,7 +54,8 @@
 
     <body class="easyui-layout">
         <form id="form1">
-            <div data-options="region:'north',border:false,title:'BOM报价单列表'" style="height: 106px; padding: 5px;background: #f2f2f2">
+            <div data-options="region:'north',border:false,title:'@Model.Name'" style="height: 106px; padding: 5px; background: #f2f2f2">
+                @* Repeater 可以自由从界面选择 *@
                 <div class="searchitem">
                     <span class="itemtitle">客户代码：</span><span>
                         <input type="text" style="width: 100px; font-size: 12px; padding: 3px;" id="customerCode" />
@@ -75,7 +86,7 @@
                 </div>
                 <div class="searchitem">
                     <span class="itemtitle">状态：</span><span>
-                        <select id="statesDropdownList" class="easyui-combobox" name="state" style="width:100px;" data-options="panelHeight:'auto',multiple:false">
+                        <select id="statesDropdownList" class="easyui-combobox" name="state" style="width: 100px;" data-options="panelHeight:'auto',multiple:false">
                             <option value="0">--不限--</option>
                             <option value="10">未确认</option>
                             <option value="20">已分配</option>

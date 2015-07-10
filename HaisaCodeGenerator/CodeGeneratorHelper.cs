@@ -24,12 +24,12 @@ namespace HaisaCodeGenerator
               var viewBag = new DynamicViewBag();
             viewBag.AddValue("test","hello haisa");
 
-            var result = generator.RunGenerate(templateFile,
-                new
-                {
-                    Name = "hiasa"
-                },
-            viewBag);
+            //var result = generator.RunGenerate(templateFile,
+            //    new
+            //    {
+            //        Name = "hiasa"
+            //    },
+            //viewBag);
 
             generator.RunGenerateAndOutPut(templateFile,
             new
