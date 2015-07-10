@@ -17,17 +17,26 @@ namespace HaisaCodeGenerator
         {
             //var template = "";
 
-            var templateFile =@"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Templates\1.cshtml";
+            var templateFile = @"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Templates\ListTemplate.cshtml";
+            var outputFile = @"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Views\Home\ListTemplate.cshtml";
 
             var generator = new CodeGeneratorCodeBase();
               var viewBag = new DynamicViewBag();
             viewBag.AddValue("test","hello haisa");
 
-            var result=generator.RunGenerate(templateFile,
-                new{
-                Name = "hiasa"
-            }, 
+            var result = generator.RunGenerate(templateFile,
+                new
+                {
+                    Name = "hiasa"
+                },
             viewBag);
+
+            generator.RunGenerateAndOutPut(templateFile,
+            new
+            {
+                Name = "hiasa"
+            },
+        viewBag, outputFile);
 
         }
     }

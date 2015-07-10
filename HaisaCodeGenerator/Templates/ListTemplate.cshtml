@@ -1,0 +1,123 @@
+﻿@@using GoerTek.ESPSolution.WebApp.Common
+@{
+    ViewBag.Title = "BomList";
+}
+
+<link href="~/Themes/default/easyui.css" rel="stylesheet" />
+<link href="~/Themes/icon.css" rel="stylesheet" />
+<script type="text/javascript" src="~/scripts/jquery-1.8.3.min.js"></script>
+<script src="~/Scripts/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="~/scripts/DateControlformat.js"></script>
+<script type="text/javascript" src="~/scripts/Utility.js"></script>
+<script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+@@if (string.IsNullOrEmpty(LoginUser.UserID))
+{
+    <script>
+        $(function () {
+            $.messager.alert("提示", "用户没有登录或登录信息已过期，<a href='#' onclick='JumpToLogin();'>点此登录</a>", "warning");
+        });
+    </script>
+    return;
+}
+
+<script src="~/Scripts/BOMCost/BOMCostList.js"></script>
+<style type="text/css">
+    .searchitem {
+        float: left;
+        margin: 4px;
+    }
+
+    .qtyLine {
+        height: 22px;
+        line-height: 22px;
+        font-size: 10pt;
+        width: 100%;
+        text-align: center;
+        border-bottom: 1px dotted #cccccc;
+    }
+
+    .splider {
+        margin-top: 3px;
+        border-top: 1px dotted #cccccc;
+    }
+</style>
+
+    <body class="easyui-layout">
+        <form id="form1">
+            <div data-options="region:'north',border:false,title:'BOM报价单列表'" style="height: 106px; padding: 5px;background: #f2f2f2">
+                <div class="searchitem">
+                    <span class="itemtitle">客户代码：</span><span>
+                        <input type="text" style="width: 100px; font-size: 12px; padding: 3px;" id="customerCode" />
+                    </span>
+                </div>
+                <div class="searchitem">
+                    <span class="itemtitle">项目名称：</span><span>
+                        <input type="text" style="width: 100px; font-size: 12px; padding: 3px;" id="projectName" />
+                    </span>
+                </div>
+                <div class="searchitem">
+                    <span class="itemtitle">Bom号：</span><span>
+                        <input type="text" style="width: 70px; font-size: 12px; padding: 3px;"
+                               id="bomNo" />
+                    </span>
+                </div>
+                <div class="searchitem">
+                    <span class="itemtitle">PL：</span><span>
+                        <input type="text" style="width: 70px; font-size: 12px; padding: 3px;"
+                               id="plName" />
+                    </span>
+                </div>
+                <div class="searchitem">
+                    <span class="itemtitle">项目协调：</span><span>
+                        <input type="text" style="width: 70px; font-size: 12px; padding: 3px;"
+                               id="coorName" />
+                    </span>
+                </div>
+                <div class="searchitem">
+                    <span class="itemtitle">状态：</span><span>
+                        <select id="statesDropdownList" class="easyui-combobox" name="state" style="width:100px;" data-options="panelHeight:'auto',multiple:false">
+                            <option value="0">--不限--</option>
+                            <option value="10">未确认</option>
+                            <option value="20">已分配</option>
+                            <option value="40">已关闭</option>
+                            <option value="50">已作废</option>
+                        </select>
+                    </span>
+                </div>
+                <div style="clear: both"></div>
+                <div class="searchitem">
+                    <span class="itemtitle">接收日期从：</span><span>
+                        <input type="text" style="width: 90px; font-size: 12px; padding: 3px;" class="easyui-datebox"
+                               id="createDateFrom" />
+                        到：
+                        <input type="text" style="width: 90px; font-size: 12px; padding: 3px;" class="easyui-datebox"
+                               id="createDateTo" />
+                    </span>
+                </div>
+
+                <div class="searchitem">
+                    <span class="itemtitle">需求日期从：</span><span>
+                        <input type="text" style="width: 90px; font-size: 12px; padding: 3px;" class="easyui-datebox"
+                               id="reqDateFrom" />
+                        到：
+                        <input type="text" style="width: 90px; font-size: 12px; padding: 3px;" class="easyui-datebox"
+                               id="reqDateTo" />
+                    </span>
+                </div>
+
+                <div class="searchitem">
+                    <span style="float: left;">&nbsp;&nbsp;</span>
+                    <a id="search" href="#" class="easyui-linkbutton"
+                       data-options="iconCls:'icon-search'" style="float: left; margin-top: -2px;">查询</a>
+                </div>
+                <div class="searchitem">
+                    <a id="reset" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'"
+                       style="float: left; margin-top: -2px; margin-left: 5px;">重置</a>
+                </div>
+            </div>
+            <div data-options="region:'center',border:false" style="background-color: transparent;padding: 0px 0px;">
+                <div id="dataGrid">
+                </div>
+            </div>
+        </form>
+    </body>
