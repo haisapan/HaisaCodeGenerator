@@ -126,12 +126,16 @@
     <AppDesigner Include="Properties\" />
     <None Include="Templates\1.cshtml" />
     <None Include="Templates\justOutPut.cshtml" />
+    <None Include="Templates\ListTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGeneratorBase\CodeGeneratorBase.csproj">
       <Project>{DA6FA102-D197-4BD4-8317-1AF8189BC737}</Project>
       <Name>CodeGeneratorBase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Home\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
