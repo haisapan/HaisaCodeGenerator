@@ -7,6 +7,7 @@ using System.Web.Razor.Generator;
 using CodeGeneratorBase;
 using RazorEngine;
 using RazorEngine.Templating;
+using Encoding = System.Text.Encoding;
 
 
 namespace HaisaCodeGenerator
@@ -20,7 +21,7 @@ namespace HaisaCodeGenerator
             var templateFile = @"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Templates\ListTemplate.cshtml";
             var outputFile = @"E:\Project\CodeGenerator\HaisaCodeGenerator\HaisaCodeGenerator\Views\Home\ListTemplate.cshtml";
 
-            var generator = new CodeGeneratorCodeBase();
+            var generator = new CodeGeneratorCodeBase(Encoding.UTF8);
               var viewBag = new DynamicViewBag();
             viewBag.AddValue("test","hello haisa");
 
@@ -36,7 +37,7 @@ namespace HaisaCodeGenerator
             {
                 Name = "hiasa"
             },
-        viewBag, outputFile);
+            viewBag, outputFile);
 
         }
     }

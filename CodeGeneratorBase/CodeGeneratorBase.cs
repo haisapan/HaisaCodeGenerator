@@ -15,6 +15,9 @@ namespace CodeGeneratorBase
 {
     public class CodeGeneratorCodeBase:ICodeGeneratorBase
     {
+        /// <summary>
+        /// Current generator encoding
+        /// </summary>
         public Encoding CurrentEncoding { get; set; }
         public CodeGeneratorCodeBase():this(Encoding.UTF8)
         {
@@ -43,10 +46,12 @@ namespace CodeGeneratorBase
                 throw new Exception("the complie file not exist:" + filePath);
             }
 
-            string content = File.ReadAllText(filePath, CurrentEncoding);
-            var result = Engine.Razor.RunCompile(content, "new", null, model, viewBag);
-
-            return result;
+            using (StreamReader reader = new StreamReader(filePath, CurrentEncoding)) //Encoding.GetEncoding("gb2312")
+            {
+                var content = reader.ReadToEnd();
+                var result = Engine.Razor.RunCompile(content, "new", null, model, viewBag);
+                return result;
+            }
 
         }
 
@@ -68,18 +73,11 @@ namespace CodeGeneratorBase
                 Directory.CreateDirectory(directory);
             }
 
-            using (FileStream fileStream = new FileStream(outputFilePath, FileMode.OpenOrCreate))
-            {
-                StreamWriter sw = new StreamWriter(fileStream, CurrentEncoding);
-               
-                var encoding = new ASCIIEncoding();
-                //var encoding =System.Text.Encoding.GetEncoding("gb2312");
-                Byte[] bytes = encoding.GetBytes(result);
-                //Byte[] bytes = encoding.GetBytes(result);
-               sw.Write(result.ToCharArray());
-                sw.Flush();
-               // fileStream.Write(bytes,0, bytes.Length);
-            }
+            StreamWriter writer = new StreamWriter(outputFilePath, false, CurrentEncoding);
+            //writer.AutoFlush = true;
+            writer.Write(result);
+            writer.Flush();
+           
         }
     }
 }

@@ -4,7 +4,7 @@
     var Model = new
     {
         ModelCode="BOMCost",
-        Name = "BOMCostList"
+        PageName = "BOMCostList"
     };
 }
 
@@ -30,7 +30,7 @@
     return;
 }
 
-<script src="~/Scripts/@Model.ModelCode/@(Model.Name).js"></script>
+<script src="~/Scripts/@Model.ModelCode/@(Model.PageName).js"></script>
 <style type="text/css">
     .searchitem {
         float: left;
@@ -54,7 +54,7 @@
 
     <body class="easyui-layout">
         <form id="form1">
-            <div data-options="region:'north',border:false,title:'@Model.Name'" style="height: 106px; padding: 5px; background: #f2f2f2">
+            <div data-options="region:'north',border:false,title:'@Model.PageName'" style="height: 106px; padding: 5px; background: #f2f2f2">
                 @* Repeater 可以自由从界面选择 *@
                 <div class="searchitem">
                     <span class="itemtitle">客户代码：</span><span>
@@ -127,7 +127,7 @@
                 </div>
             </div>
             <div data-options="region:'center',border:false" style="background-color: transparent;padding: 0px 0px;">
-                <div id="dataGrid">
+                <div id="@(Model.PageName)DataGrid">
                 </div>
             </div>
         </form>
