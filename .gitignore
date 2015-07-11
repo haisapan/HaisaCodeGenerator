@@ -45,5 +45,6 @@ HaisaCodeGenerator/bin
 CodeGeneratorBase/bin
 CodeGeneratorBase/obj
 HaisaCodeGenerator/obj
+CodeGenerator.Helper/bin
+CodeGenerator.Helper/obj
 
-HaisaCodeGenerator/bin/Debug/HaisaCodeGenerator.exe

@@ -1,0 +1,591 @@
+﻿<script>
+var currentSort = "";
+var currentOrder = "";
+var currentPageSize = 10;
+var currentPageNumber = 1;
+
+var currentSourceData = null;
+
+$(function () {
+
+    $("#search").click(function () {
+        QueryData(1, currentPageSize, currentSort, currentOrder);
+    });
+
+    $("#reset").click(function () {
+        $("#form1")[0].reset();
+        $("#statesDropdownList").combobox("setValue", 99);
+    });
+
+    $('#dataGrid').datagrid({
+        singleSelect: false,
+        selectOnCheck: true,
+        checkOnSelect: false,
+        fit: true,
+        striped: true,
+        pageList: [10, 20, 30, 100],
+        rownumbers: true,
+        //toolbar: '#tb',
+        //remoteSort: true,
+        loadMsg: "请稍等，正在加载数据...",
+        onSortColumn: function (sort, order) {
+            currentSort = sort;
+            currentOrder = order;
+            QueryData(1, currentPageSize, sort, order);
+        },
+
+        onClickRow: function (rowIndex, rowData) {
+            $(this).datagrid('unselectRow', rowIndex);
+        },
+
+        frozenColumns: [[
+                {
+                    field: 'HEAD_ID', title: 'BOM报价流水号', width: 110,
+                    formatter: function (value, rec, index) {
+                        return "<a href='#' onclick=\"javascript:window.parent.newTab('BOM报价单:" + value + "','BOMCost/BOMCostDetail/?id=" + value + "');\">" + value + "</a>";
+                    }
+                },
+        ]],
+        columns: [[
+
+                { field: 'CUSTOMER_CODE', title: '客户代码', width: 65 },
+                { field: 'PROJECT_NAME', title: '项目名称', width: 70 },
+                {
+                    field: 'REQ_DATE', title: '需求日期', width: 80, formatter: function (value, rec, index) {
+                        return rec.REQ_DATE;
+                    }
+                },
+                { field: 'REQ_QTY', title: '需求数量', width: 80 },
+                //{ field: 'EXCHANGE_RATE_GROUP', title: '汇率组', width: 80 },
+                { field: 'BOM_NO', title: 'BOM号', width: 120 },
+                { field: 'BOM_VERSION', title: 'BOM版本', width: 120 },
+                { field: 'PL_NAME', title: 'PL', width: 75 },
+                { field: 'COOR_NAME', title: '项目协调', width: 75 },
+                { field: 'IS_LOCKED', title: '是否锁定', width: 60 },
+                { field: 'STATUS_TEXT', title: '状态', width: 70 },
+                 { field: 'ApproveByStatus', title: '审批进度', width: 70 },
+                { field: 'REMARK', title: '备注', width: 160 },
+
+                //{ field: 'UPDATE_OP_NAME', title: '最后更新人', width: 70 },
+                //{
+                //    field: 'UPDATE_DATE', title: '最后更新时间', width: 110, formatter: function (value, rec, index) {
+                //        return rec.UPDATE_DATE;
+                //    }
+                //},
+
+
+                /*{
+                    field: 'COMFIRMED_OK_COUNT', title: '确认状态', width: 110, align: 'center', formatter: function (valueF, rec, indexF) {
+                        var tooltip= "未确认:" + rec.NOT_COMFIRMED_COUNT + " \r\n已确认通过:" + rec.COMFIRMED_OK_COUNT
+                           + " \r\n已确认不通过:" + rec.COMFIRMED_REFUSE_COUNT + " \r\n总数量:" + rec.TOTAL_COUNT;
+                        return "<div class='tooltip' title='" + tooltip + "'>
+    " + rec.NOT_COMFIRMED_COUNT + "/" + rec.COMFIRMED_OK_COUNT
+    + "/" + rec.COMFIRMED_REFUSE_COUNT + "/" + rec.TOTAL_COUNT+"
+</div>";
+                        //if (rec.ISREPLYCOUNT == 0) {
+                        //    return "未回复";
+                        //} else if (rec.REPLIED_COUNT > 0 && rec.REPLIED_COUNT < rec.TOTAL_COUNT) {
+                        //    return "已部分回复(" + rec.REPLIED_COUNT + "/" + rec.TOTAL_COUNT + ")";
+                        //} else if (rec.REPLIED_COUNT > 0 && rec.REPLIED_COUNT == rec.TOTAL_COUNT) {
+                        //    return "已全部回复(" + rec.REPLIED_COUNT + "/" + rec.TOTAL_COUNT + ")";
+                        //}
+                        //return "未回复";
+                    }
+                }*/
+
+
+        ]],
+        onBeforeEdit: function (index, row) {
+            row.editing = true;
+            updateActions(index);
+        },
+        onAfterEdit: function (index, row) {
+            row.editing = false;
+            updateActions(index);
+        },
+        onCancelEdit: function (index, row) {
+            row.editing = false;
+            updateActions(index);
+        },
+        pagination: true
+
+    });
+
+    var pager = $("#dataGrid").datagrid("getPager");
+    pager.pagination({
+        onSelectPage: function (pageNumber, pageSize) {
+            currentPageNumber = pageNumber;
+            currentPageSize = pageSize;
+            pager.pagination('refresh', {
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            });
+
+            //var data=$("#dataGrid").datagrid("getData");
+
+            QueryData(pageNumber, pageSize, currentSort, currentOrder);
+        }
+    });
+
+
+
+    QueryData(1, currentPageSize, currentSort, currentOrder);
+
+});
+
+
+
+function QueryDataGridData() {
+    QueryData(1, currentPageSize, currentSort, currentOrder);
+}
+
+function QueryData(pageNumber, pageSize, sort, order) {
+
+    var filter = {
+        customerCode: $("#customerCode").val(),
+        projectName: $("#projectName").val(),
+        bomNo: $("#bomNo").val(),
+        plName: $("#plName").val(),
+        coorName: $("#coorName").val(),
+
+        createDateFrom: $("#createDateFrom").datebox('getValue'),
+        createDateTo: $("#createDateTo").datebox('getValue'),
+        reqDateFrom: $("#reqDateFrom").datebox('getValue'),
+        reqDateTo: $("#reqDateTo").datebox('getValue'),
+        createOpName: $("#createOpName").val(),
+        status: $("#statesDropdownList").combobox("getValue"),
+        page: pageNumber,
+        pageSize: pageSize,
+        sort: "" + sort + "",
+        order: "" + order + "",
+
+    }
+
+    $.post("../BOMCost/GetBOMList",
+               filter,
+               function (data) {
+                   //currentSourceData = data;
+                   //currentSourceData.slice(0, pageSize);
+                   $("#dataGrid").datagrid("loadData", data);
+                   //$("input[name='selectedFiled']").each(function () {
+                   //    BindCheckBoxClick($(this));
+                   //});
+               },
+               "json");
+}
+
+function ClearForm() {
+    $("#FromDate").val("");
+    $("#EndDate").val("");
+    $("#buyerDivision").val("");
+    $("#partNo").val("");
+
+}
+
+function BindCheckBoxClick(checkbox) {
+
+    var rowIndex = getRowIndex(checkbox);
+    $(checkbox).click(function () {
+        console.log($(checkbox).html());
+        if ($(checkbox).is(":checked")) {
+            console.log("选中checkbox");
+
+            var rows = $('#dataGrid').datagrid('getRows');
+            var currentRowData = rows[rowIndex];
+            if (currentRowData.SendStatus === "已提交") {
+                $.messager.alert('提示', "已提交数据不可编辑！请使用复制为功能新建一条数据！");
+                return;
+            }
+
+            $('#dataGrid').datagrid('beginEdit', rowIndex);
+            $('#dataGrid').datagrid('checkRow', rowIndex);  //todo 必须重新选中，因为beginEdit会重新刷新，导致选中失败
+
+            var checkedRow = $("tr.datagrid-row[datagrid-row-index=" + rowIndex + "]").first();
+            var thisCheckbox = checkedRow.find("input[name='selectedFiled']");
+            BindCheckBoxClick(thisCheckbox);
+
+        } else {
+            console.log("uncheck" + rowIndex);  //todo 因为刷新问题，导致这里失败
+            $('#dataGrid').datagrid('endEdit', rowIndex);
+            var uncheckedRow = $("tr.datagrid-row[datagrid-row-index=" + rowIndex + "]").first();
+            var thisUnCheckbox = uncheckedRow.find("input[name='selectedFiled']");
+            BindCheckBoxClick(thisUnCheckbox);
+        }
+
+    });
+
+}
+
+
+
+
+
+
+
+//##############################################Shraft DataGrid#######################
+function updateActions(index) {
+    $('#dataGrid').datagrid('updateRow', {
+        index: index,
+        row: {}
+    });
+}
+function getRowIndex(target) {
+    var tr = $(target).closest('tr.datagrid-row');
+    return parseInt(tr.attr('datagrid-row-index'));
+}
+function editrow(target) {
+    $('#dataGrid').datagrid('beginEdit', getRowIndex(target));
+}
+function deleterow(target) {
+    $.messager.confirm('警告', '确定删除该行数据?', function (r) {
+        if (r) {
+
+            var rowIndex = getRowIndex(target);
+            var rows = $('#dataGrid').datagrid('getRows');
+            var currentRowData = rows[rowIndex];
+            if (currentRowData != undefined && (currentRowData.SendStatus === "未保存" || currentRowData.SendStatus === "已提交")) {
+                $.messager.alert('提示', "未保存、已提交数据不能删除！");
+                return;
+            }
+            $.post(webRootPath + "SPST/DeletSpst",
+            {
+                spst: JSON.stringify(currentRowData)
+
+            },
+            function (data) {
+                if (data.IsSuccessed) {
+                    $('#dataGrid').datagrid('deleteRow', rowIndex);
+                    $.messager.alert('提示', "删除成功！");
+                } else {
+                    $.messager.alert('提示', "删除失败：" + data.Error);
+                }
+
+            },
+            "json");
+        }
+    });
+}
+
+function deleteAll() {
+    RefreshCheckedStatus();
+    $.messager.confirm('警告', '确定删除这些数据?', function (r) {
+        if (r) {
+
+            var checkedItems = $('#dataGrid').datagrid('getChecked');
+            if (checkedItems.length < 1) {
+                $.messager.alert('提示', "必须选中至少一项进行删除！");
+                return;
+            }
+
+            var isError = false;
+            $.each(checkedItems, function (index, item) {
+                if (item.SendStatus === "未保存" || item.SendStatus === "已提交") {
+                    $.messager.alert('提示', "未保存和已提交数据不能删除！");
+                    isError = true;
+                    return false;
+                }
+
+                var thisRowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+                $('#dataGrid').datagrid('endEdit', thisRowIndex);
+
+            });
+
+            if (isError) {
+                return;
+            }
+
+            $.post(webRootPath + "SPST/DeletSpsts",
+            {
+                spsts: JSON.stringify(checkedItems)
+
+            },
+            function (data) {
+                if (data.IsSuccessed) {
+                    $("input[name='selectedFiled']").each(function () {
+                        if ($(this).is(":checked")) {
+                            var rowIndex = getRowIndex(this);
+                            $('#dataGrid').datagrid('deleteRow', rowIndex);  //todo 必须重新选中，因为beginEdit会重新刷新，导致选中失败
+                        }
+                    });
+                    $.messager.alert('提示', "删除成功！");
+                } else {
+                    $.messager.alert('提示', "删除失败：" + data.Error);
+                }
+
+            },
+            "json");
+        }
+    });
+}
+
+function saverow(target) {
+    var rowIndex = getRowIndex(target);
+    $('#dataGrid').datagrid('endEdit', getRowIndex(target));
+    var rows = $('#dataGrid').datagrid('getRows');
+    console.log(rows.toString());
+    var currentRowData = rows[rowIndex];
+    console.log(currentRowData.toString());
+    var currentSpst = JSON.stringify(currentRowData);
+    $.post(webRootPath + "SPST/UpdateSpst",
+             {
+                 spst: currentSpst
+
+             },
+             function (data) {
+                 if (data.IsSuccessed) {
+                     //$('#dataGrid').datagrid('endEdit', getRowIndex(target));
+                 } else {
+                     $.messager.alert('提示', "删除失败：" + data.Error);
+
+                 }
+
+             },
+             "json");
+
+}
+
+function saveAll() {
+    RefreshCheckedStatus();
+
+
+    $("input[name='selectedFiled']").each(function () {
+        if ($(this).is(":checked")) {
+            var rowIndex = getRowIndex(this);
+            $('#dataGrid').datagrid('checkRow', rowIndex);  //todo 必须重新选中，因为beginEdit会重新刷新，导致选中失败
+        }
+    });
+
+    var checkedItems = $('#dataGrid').datagrid('getChecked');
+
+    if (checkedItems.length < 1) {
+        $.messager.alert('提示', "必须选中一项进行提交！");
+        return;
+    }
+
+    $.messager.confirm('警告', '批量保存将刷新当前页面，是否保存?', function (r) {
+        if (r) {
+            var isError = false;
+            $.each(checkedItems, function (index, item) {
+
+                if (item.SendStatus != "未保存") {
+                    $.messager.alert('提示', "已保存或者已提交的数据不能再次保存，只能选择未保存未提交的数据！");
+                    isError = true;
+                    return false;
+                }
+
+                var d = new Date();
+                item.SUP_DATE_ADDED = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+                item.SUP_TIME_ADDED = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);
+                item.SUP_CREATE_DATE = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+                item.SUP_CREATE_TIME = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);  //todo 这些时间在js中创建，然后传给后台
+
+                var rowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+                $('#dataGrid').datagrid('endEdit', rowIndex);
+
+            });
+
+            if (isError) {
+                return;
+            }
+
+
+            $.post(webRootPath + "SPST/SaveAll",
+                     {
+                         spsts: JSON.stringify(checkedItems)
+                     },
+                     function (data) {
+                         if (data.IsSuccessed) {
+
+                             $.each(checkedItems, function (index, item) {
+                                 var rowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+                                 $('#dataGrid').datagrid('beginEdit', rowIndex);
+                                 item.SendStatus = "已保存";
+                                 $('#dataGrid').datagrid('endEdit', rowIndex);
+                             });
+
+                             $.messager.alert('提示', "保存成功！", "info");
+                             QueryData(pageNumber, pageSize, currentSort, currentOrder);
+                         } else {
+                             $.each(checkedItems, function (index, item) {
+                                 var rowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+                                 $('#dataGrid').datagrid('beginEdit', rowIndex);
+
+                                 var d = new Date();
+                                 item.SUP_DATE_ADDED = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+                                 item.SUP_TIME_ADDED = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);
+                                 item.SUP_CREATE_DATE = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+                                 item.SUP_CREATE_TIME = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);
+                                 $('#dataGrid').datagrid('endEdit', rowIndex);
+                             });
+
+                             $.messager.alert('提示', "保存失败：" + data.Error);
+                         }
+                     },
+                     "json");
+        }
+    });
+
+
+
+}
+
+function submitAll() {
+
+    RefreshCheckedStatus();
+
+    var checkedItems = $('#dataGrid').datagrid('getChecked');
+    if (checkedItems.length < 1) {
+        $.messager.alert('提示', "必须选中一项进行提交！");
+        return;
+    }
+
+
+
+    var isError = false;
+    $.each(checkedItems, function (index, item) {
+        if (item.SendStatus == "已提交") {
+            $.messager.alert('提示', "已提交的数据不能再次提交，只能选择未保存和未提交的数据！");
+            isError = true;
+            return false;
+        }
+
+        item.ERP_APPENDIX1 = item.ITEM_CODE;
+        var rowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+        $('#dataGrid').datagrid('endEdit', rowIndex);
+
+    });
+
+    if (isError) {
+        return;
+    }
+
+    $.messager.confirm('警告', '批量提交将刷新当前页面，是否提交?', function (r) {
+        if (r) {
+            $.post(webRootPath + "SPST/SubmitAll",
+         {
+             spsts: JSON.stringify(checkedItems)
+
+         },
+         function (data) {
+             if (data.IsSuccessed) {
+                 $.each(checkedItems, function (index, item) {
+                     var rowIndex = $('#dataGrid').datagrid('getRowIndex', item);
+                     $('#dataGrid').datagrid('beginEdit', rowIndex);
+                     item.SendStatus = "已提交";
+                     $('#dataGrid').datagrid('endEdit', rowIndex);
+                 });
+                 $.messager.alert('提示', "提交成功！");
+                 QueryData(pageNumber, pageSize, currentSort, currentOrder);
+             } else {
+                 $.messager.alert('提示', "提交失败：" + data.Error);
+             }
+
+         },
+         "json");
+        }
+    });
+
+
+
+
+}
+
+function confirmrow(target) {
+    var rows = $('#dataGrid').datagrid('getRows');
+    var rowIndex = getRowIndex(target);
+    var currentRowData = rows[rowIndex];
+    var currentSpst = JSON.stringify(currentRowData);
+
+    $.post(webRootPath + "SPST/MoveDataToProduct",
+             {
+                 spst: currentSpst
+
+             },
+             function (result) {
+                 if (result.IsSuccessed) {
+                     alert("该行数据确认成功!");
+                     $(target).hide();
+
+                 } else {
+                     alert(result.Error);
+                 }
+
+             },
+             "json");
+}
+
+function cancelrow(target) {
+    $('#dataGrid').datagrid('cancelEdit', getRowIndex(target));
+}
+
+var newRowIndex = 0;
+function insert() {
+
+    var rowRecord = {
+        BUYER_COMPANY: currentBUYER_COMPANY,
+        BUYER_DIVISION: currentBUYER_DIVISION,
+        SELLER_COMPANY: currentSELLER_COMPANY,
+        SELLER_DIVISION: currentSELLER_DIVISION,
+        STATUS: 'R',
+        SendStatus: "未保存",
+        ERP_APPENDIX1: newRowIndex
+    };
+    $('#dataGrid').datagrid('appendRow', rowRecord);
+    var index = $('#dataGrid').datagrid('getRowIndex', rowRecord);
+    console.log("newRow:" + index);
+    $('#dataGrid').datagrid('checkRow', index);
+    $('#dataGrid').datagrid('selectRow', index);
+
+    $('#dataGrid').datagrid('beginEdit', index);
+}
+
+function copyAs() {
+
+    RefreshCheckedStatus();
+    var checkedItems = $('#dataGrid').datagrid('getChecked');
+    if (checkedItems.length > 1) {
+        $.messager.alert('提示', "只能选择一行数据进行复制！");
+        return;
+    }
+
+    if (checkedItems.length < 1) {
+        $.messager.alert('提示', "没有选择数据！");
+        return;
+    }
+
+
+    var row = $('#dataGrid').datagrid('getSelected');
+    var copyRow = jQuery.extend({}, row);
+    //var copyRow = row.copyAs;
+    console.log("copyrow:" + copyRow);
+    copyRow.SendStatus = "未保存";
+
+    var d = new Date();
+
+
+    /* 质朴长存法  by lifesinger */
+
+    copyRow.SUP_DATE_ADDED = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+    copyRow.SUP_TIME_ADDED = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);
+    copyRow.SUP_CREATE_DATE = d.getFullYear() + pad(d.getMonth() + 1, 2) + pad(d.getDate(), 2);
+    copyRow.SUP_CREATE_TIME = pad(d.getHours(), 2) + pad(d.getMinutes() + 1, 2) + pad(d.getSeconds(), 2);
+
+    $('#dataGrid').datagrid('unselectAll');
+    $('#dataGrid').datagrid('appendRow', copyRow);
+    var index = $('#dataGrid').datagrid('getRowIndex', copyRow);
+    console.log("copyAsRow:" + index);
+    $('#dataGrid').datagrid('selectRow', index);
+    $('#dataGrid').datagrid('checkRow', index);
+    $('#dataGrid').datagrid('beginEdit', index);
+
+}
+
+function RefreshCheckedStatus() {
+    $("input[name='selectedFiled']").each(function () {
+        if ($(this).is(":checked")) {
+            var rowIndex = getRowIndex(this);
+            $('#dataGrid').datagrid('checkRow', rowIndex);  //todo 必须重新选中，因为beginEdit会重新刷新，导致选中失败
+        }
+    });
+}
+</script>

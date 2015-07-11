@@ -127,6 +127,7 @@
     <None Include="Templates\1.cshtml" />
     <None Include="Templates\justOutPut.cshtml" />
     <None Include="Templates\ListTemplate.cshtml" />
+    <None Include="Templates\Scripts\List.js.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGeneratorBase\CodeGeneratorBase.csproj">
@@ -135,6 +136,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Helper\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

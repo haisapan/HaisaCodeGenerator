@@ -74,7 +74,6 @@ namespace CodeGeneratorBase
             }
 
             StreamWriter writer = new StreamWriter(outputFilePath, false, CurrentEncoding);
-            //writer.AutoFlush = true;
             writer.Write(result);
             writer.Flush();
            

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaisaCodeGenerator", "Haisa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGeneratorBase", "CodeGeneratorBase\CodeGeneratorBase.csproj", "{DA6FA102-D197-4BD4-8317-1AF8189BC737}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator.Helper", "CodeGenerator.Helper\CodeGenerator.Helper.csproj", "{67CFF442-744D-430C-AEF5-ED807EEA23DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{DA6FA102-D197-4BD4-8317-1AF8189BC737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA6FA102-D197-4BD4-8317-1AF8189BC737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA6FA102-D197-4BD4-8317-1AF8189BC737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67CFF442-744D-430C-AEF5-ED807EEA23DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67CFF442-744D-430C-AEF5-ED807EEA23DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67CFF442-744D-430C-AEF5-ED807EEA23DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67CFF442-744D-430C-AEF5-ED807EEA23DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
